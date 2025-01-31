@@ -5,6 +5,8 @@ import org.example.lista_de_compras_back.repository.UsuarioRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
@@ -31,5 +33,11 @@ public class UsuarioController {
                         ResponseEntity.ok("Login exitoso") :
                         ResponseEntity.badRequest().body("Credenciales incorrectas"))
                 .orElse(ResponseEntity.badRequest().body("Usuario no encontrado"));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Users>> listarUsuarios() {
+        List<Users> usuarios = usuarioRepository.findAll();
+        return ResponseEntity.ok(usuarios);
     }
 }

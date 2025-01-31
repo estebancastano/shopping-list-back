@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class Users {
     private Long id;
 
     @NotBlank(message = "El nombre no puede estar vacío")
-    private String nombre;
+    private String username;
 
     @Email(message = "Debe ser un email válido")
     @NotBlank(message = "El email no puede estar vacío")
@@ -29,6 +30,9 @@ public class Users {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductLists> productLists = new ArrayList<>();
 
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     public Long getId() {
         return id;
     }
@@ -38,11 +42,11 @@ public class Users {
     }
 
     public String getNombre() {
-        return nombre;
+        return username;
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.username = nombre;
     }
 
     public String getEmail() {

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "product")
+@Table(name = "products")
 public class Products {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,12 +18,13 @@ public class Products {
     private String unit;
 
     @ManyToOne
-    @JoinColumn(name = "list_id", nullable = false)
+    @JoinColumn(name = "list_id")
     private ProductLists list;
 
-    private Boolean comprado = false; // Campo para marcar si el producto fue comprado
+    private Boolean bought = false; // Campo para marcar si el producto fue comprado
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -65,12 +66,12 @@ public class Products {
         this.list = list;
     }
 
-    public Boolean getComprado() {
-        return comprado;
+    public Boolean getBought() {
+        return bought;
     }
 
-    public void setComprado(Boolean comprado) {
-        this.comprado = comprado;
+    public void setBought(Boolean comprado) {
+        this.bought = comprado;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -31,7 +31,7 @@ public class ProductService {
             products.setName(updatedProducts.getName());
             products.setQuantity(updatedProducts.getQuantity());
             products.setUnit(updatedProducts.getUnit());
-            products.setComprado(updatedProducts.getComprado());
+            products.setBought(updatedProducts.getBought());
             return productRepository.save(products);
         });
     }
