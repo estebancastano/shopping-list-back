@@ -7,6 +7,8 @@ import org.example.lista_de_compras_back.repository.ProductListRepository;
 import org.example.lista_de_compras_back.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -25,9 +27,19 @@ public class ProductController {
         this.productListRepository = productListRepository;
     }
 
-    @GetMapping("/{listId}")
-    public ResponseEntity<List<Products>> getProductsByListId(@PathVariable Long listId) {
-        return ResponseEntity.ok(productService.getProductsByListId(listId));
+    @GetMapping("/user-products")
+    public ResponseEntity<List<Products>> getProductsForCurrentUser() {
+        String username = getAuthenticatedUser(); // Obtener el usuario autenticado
+        List<Products> userProducts = productService.getProductsByUser(username);
+        return ResponseEntity.ok(userProducts);
+    }
+
+    private String getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return authentication.getName(); // Esto devuelve el nombre del usuario autenticado
+        }
+        return null;
     }
 
 

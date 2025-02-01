@@ -2,7 +2,7 @@ package org.example.lista_de_compras_back.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-
+import org.example.lista_de_compras_back.model.Users;
 import java.time.LocalDateTime;
 
 
@@ -20,6 +20,11 @@ public class Products {
     @ManyToOne
     @JoinColumn(name = "list_id")
     private ProductLists list;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private Users user; // Relación con el usuario que creó el producto
+
 
     private Boolean bought = false; // Campo para marcar si el producto fue comprado
 

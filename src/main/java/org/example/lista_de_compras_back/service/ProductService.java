@@ -14,14 +14,12 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public List<Products> getProductsByListId(Long listId) {
-        return productRepository.findByListId(listId);
-    }
-
     public Products addProduct(Products products) {
         return productRepository.save(products);
     }
-
+    public List<Products> getProductsByUser(String username) {
+        return productRepository.findByUserUsername(username); // Suponiendo que tienes una relación de usuario en el modelo Product
+    }
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
