@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -34,12 +35,17 @@ public class ProductController {
         return ResponseEntity.ok(userProducts);
     }
 
-    private String getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            return authentication.getName(); // Esto devuelve el nombre del usuario autenticado
+    public String getAuthenticatedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            String username = ((UserDetails) principal).getUsername();
+            System.out.println("Usuario autenticado: " + username);  // 👈 Imprime el usuario
+            return username;
+        } else {
+            System.out.println("No hay usuario autenticado, valor devuelto: " + principal);
+            return "anonymousUser";
         }
-        return null;
     }
 
 
