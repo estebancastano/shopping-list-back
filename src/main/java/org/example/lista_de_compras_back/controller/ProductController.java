@@ -4,12 +4,10 @@ import org.example.lista_de_compras_back.DTO.ProductRequest;
 import org.example.lista_de_compras_back.model.ProductLists;
 import org.example.lista_de_compras_back.model.Products;
 import org.example.lista_de_compras_back.repository.ProductListRepository;
+import org.example.lista_de_compras_back.security.AuthUtil;
 import org.example.lista_de_compras_back.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -22,6 +20,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductListRepository productListRepository;
+
     @Autowired
     public ProductController(ProductService productService, ProductListRepository productListRepository) {
         this.productService = productService;
@@ -30,24 +29,15 @@ public class ProductController {
 
     @GetMapping("/user-products")
     public ResponseEntity<List<Products>> getProductsForCurrentUser() {
-        String username = getAuthenticatedUser(); // Obtener el usuario autenticado
+        String username = AuthUtil.getAuthenticatedUser(); // 🔥 Usa el nuevo método
+
+        if (username == null) {
+            return ResponseEntity.status(403).body(null); // ❌ No autenticado
+        }
+
         List<Products> userProducts = productService.getProductsByUser(username);
         return ResponseEntity.ok(userProducts);
     }
-
-    public String getAuthenticatedUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            String username = ((UserDetails) principal).getUsername();
-            System.out.println("Usuario autenticado: " + username);  // 👈 Imprime el usuario
-            return username;
-        } else {
-            System.out.println("No hay usuario autenticado, valor devuelto: " + principal);
-            return "anonymousUser";
-        }
-    }
-
 
     @PostMapping("/")
     public ResponseEntity<Products> addProduct(@RequestBody ProductRequest productRequest) {
@@ -66,11 +56,9 @@ public class ProductController {
             product.setList(null);  // Permitir que no tenga lista
         }
 
-        // Guardar el producto en la base de datos
         Products savedProduct = productService.addProduct(product);
         return ResponseEntity.ok(savedProduct);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
@@ -84,4 +72,3 @@ public class ProductController {
         return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
-
